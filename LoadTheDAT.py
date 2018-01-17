@@ -5,14 +5,16 @@ CZ = []         # 厂站
 line2 = []
 WLL = []  # 物理量（即电压、电流、有功等）
 ZHI = []  # 值
+Path = r'D:\Python Study\利用Python读取EMS数据\01 20171217EMS数据'
+
 for i in range(0, 100):
     print(i)
-    Path = '01 20171217EMS数据'
     file = Path + '\EMS_15M_' + name[i] + '.dat'
     EMS1 = open(file, 'r')
     line = EMS1.read()
     line = line.splitlines()
     line1 = line[2:-1]      # 去掉前两行和最后一行
+    line2 = []
 
     if i == 0:
         l = len(line1)
