@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 from TimeToName import time_name
-import openpyxl
 import time
+import pandas as pd
+
 name = time_name(2017, 12, 16)
 CZ = []         # 厂站
 line2 = []
@@ -10,7 +11,7 @@ ZHI = []  # 值
 Path = r'D:\Python Study\利用Python读取EMS数据\01 20171217EMS数据'
 
 start = time.clock()
-range_end = 50
+range_end = 100
 for i in range(0, range_end):
     print(i)
     file = Path + '\EMS_15M_' + name[i] + '.dat'
@@ -21,7 +22,6 @@ for i in range(0, range_end):
     line2 = []
 
     if i == 0:
-        l = len(line1)
         for x in line1:
             line2.append(x.split(','))      # append方法表示从列表最后新增元素
             CZ.append([line2[-1][1]])         # 厂站位于第二列，Python计数从0开始
@@ -37,19 +37,17 @@ for i in range(0, range_end):
             j = j + 1
     EMS1.close()
 
+# CZ = pd.DataFrame(CZ)
+# WLL = pd.DataFrame(WLL)
+ZHI = pd.DataFrame(ZHI)
 
-wb = openpyxl.Workbook()
-ws = wb.active
-ws.title = '厂站'
-ws1 = wb.create_sheet('物理量')
-ws2 = wb.create_sheet('值')
 
-for i in range(0, len(CZ)):
-    # ws.append(CZ[i])
-    # ws1.append(WLL[i])
-    ws2.append(ZHI[i])
+writer = pd.ExcelWriter('try.xlsx')
+# CZ.to_excel(writer, '厂站')
+# WLL.to_excel(writer, '物理量')
+ZHI.to_excel(writer, '值')
+writer.save()
 
-wb.save('try.xlsx')
 
 elapsed = (time.clock() - start)
 
