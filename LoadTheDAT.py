@@ -3,6 +3,7 @@ from TimeToName import time_name
 import time
 import pandas as pd
 
+start = time.clock()
 name = time_name(2017, 12, 16)
 CZ = []         # 厂站
 line2 = []
@@ -10,8 +11,7 @@ WLL = []  # 物理量（即电压、电流、有功等）
 ZHI = []  # 值
 Path = r'D:\Python Study\利用Python读取EMS数据\01 20171217EMS数据'
 
-start = time.clock()
-range_end = 10
+range_end = 288
 
 print(0)
 file = Path + '\EMS_15M_' + name[0] + '.dat'
@@ -26,7 +26,6 @@ for x in line1:
     ZHI.append(float(line2[-1][-1]))  # 值在最后一列
 CZ1 = CZ
 ZHI1 = pd.DataFrame(ZHI, index=CZ, columns=[name[0]])
-print(ZHI1)
 
 for i in range(1, range_end):
     print(i)
@@ -45,7 +44,6 @@ for i in range(1, range_end):
         ZHI.append(float(line2[-1][-1]))            # 值在最后一列
     ZHI1[name[i]] = ZHI
     EMS1.close()
-print(ZHI1)
 
 gao = ZHI1.loc[ZHI1.index.str.contains('高端有功$')]
 zhong = ZHI1.loc[ZHI1.index.str.contains('中端有功$')]
@@ -70,7 +68,10 @@ di.to_excel(writer, '低端有功')
 elapsed = (time.clock() - mid)
 print("写入低端所需时间:", elapsed)
 
+mid = time.clock()
 writer.save()
 
+elapsed = (time.clock() - mid)
+print("存储Excel所用时间:", elapsed)
 elapsed = (time.clock() - start)
-print("Time used:", elapsed)
+print('程序所用时间：', elapsed)
