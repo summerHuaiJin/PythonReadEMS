@@ -5,9 +5,7 @@ import pandas as pd
 
 start = time.clock()    # 记录程序开始的时间
 name = time_name(2017, 12, 16)  # 调用time_name程序
-CZ = []         # 厂站
-line2 = []
-ZHI = []  # 值
+
 Path = r'D:\Python Study\利用Python读取EMS数据\01 20171217EMS数据'
 
 txtFile = '有功无功.txt'    # 这个txt文件是所要读取的厂站信息
@@ -28,11 +26,13 @@ line = EMS1.read()
 line = line.splitlines()
 line1 = line[2:-1]  # 去掉前两行和最后一行
 
-for x in line1:
-    line2.append(x.split(','))  # append方法表示从列表最后新增元素，split按逗号分隔
-    temp = line2[-1][0] + ',' + line2[-1][1] + ',' + line2[-1][2]   # 厂站+物理量
-    CZ.append(temp)
-    ZHI.append(float(line2[-1][-1]))  # 值在最后一列，float表示转化为浮点数
+line2 = list(map(lambda w: w.split(','), line1))
+temp = pd.DataFrame(line2)
+CZ = temp[0] + ',' + temp[1] + ',' + temp[2]
+ZHI = temp[3]
+ZHI = list(map(float, ZHI))
+
+
 y = pd.DataFrame(ZHI, index=CZ, columns=[name[0]])  # 创建一个DataFrame
 y = y.loc[nameOfPower]  # loc方法表示索引按照nameOfPower来取数
 
@@ -47,14 +47,13 @@ for i in range(1, range_end):
     line = EMS1.read()
     line = line.splitlines()
     line1 = line[2:-1]      # 去掉前两行和最后一行
-    line2 = []
 
-    CZ = []
-    ZHI = []
-    for x in line1:
-        line2.append(x.split(','))  # append方法表示从列表最后新增元素
-        CZ.append(line2[-1][0] + ',' + line2[-1][1] + ',' + line2[-1][2])  # 厂站+物理量
-        ZHI.append(float(line2[-1][-1]))    # 值在最后一列
+    line2 = list(map(lambda w: w.split(','), line1))
+    temp = pd.DataFrame(line2)
+    CZ = temp[0] + ',' + temp[1] + ',' + temp[2]
+    ZHI = temp[3]
+    ZHI = list(map(float, ZHI))
+
     y = pd.DataFrame(ZHI, index=CZ, columns=[name[i]])
     y = y.loc[nameOfPower]
     dIndex = y.index.duplicated()
@@ -92,7 +91,7 @@ print("写入低端有功所需时间:", elapsed)
 mid = time.clock()
 gaoWu.to_excel(writer, '高端无功')
 elapsed = (time.clock() - mid)
-print("写入低端无功所需时间:", elapsed)
+print("写入高端无功所需时间:", elapsed)
 
 mid = time.clock()
 zhongWu.to_excel(writer, '中端无功')
