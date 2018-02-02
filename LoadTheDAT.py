@@ -1,7 +1,35 @@
 # -*- coding:utf-8 -*-
-from TimeToName import time_name
 import time
 import pandas as pd
+import numpy as np
+
+
+def time_name(year, month, day, days=1, minutes=5):
+    """ 这是一个将年月日时分转化为一串字符的程序
+     例如，2017年12月16日1点05分，将表示成201712160105
+     引用格式为t_name = time_name(year, month, day, days, minutes=5)
+     其中，倒数第二个参数days表示持续的天数，可不输入，默认值为1
+     最后的参数minutes表示间隔的分钟，可不输入，默认为5
+     输出为t_name，类型为list"""
+    year = str(year).zfill(4)  # zfill方法表示对字符串补位，高位补零
+    month = str(month).zfill(2)
+    day = str(day).zfill(2)
+    first_time = year + '-' + month + '-' + day + ' 00:00:00'  # 字符串可以直接用加法运算
+    # 转换成时间数组
+    time_array = time.strptime(first_time, "%Y-%m-%d %H:%M:%S")  # 时间数组元素依次为年、月、日……秒
+    # 转换成时间戳
+    timestamp = time.mktime(time_array)  # 时间戳是以秒为单位的一串数字
+
+    # numpy.arange方法跟range差不多，可以处理浮点数；
+    timestamp_list = list(np.arange(timestamp, timestamp + days * 24 * 60 * 60, 60 * minutes))
+
+    # map(A, B)表示将A方法作用在列表B中的每一个元素，返回的是map类型，用list转化为列表
+    time_array = list(map(time.localtime, timestamp_list))
+    time_array1 = list(map(lambda x: str(x[0]).zfill(4) + str(x[1]).zfill(2) + str(x[2]).zfill(2), time_array))
+    time_array2 = list(map(lambda x: str(x[3]).zfill(2) + str(x[4]).zfill(2), time_array))
+    t_name = list(map(lambda x, y: x + y, time_array1, time_array2))
+
+    return t_name
 
 
 def read_input(txt_file):
@@ -51,7 +79,7 @@ def read_dat(file, name, zhi1):
 """以下为主程序"""
 
 start = time.clock()    # 记录程序开始的时间
-Name = time_name(2017, 12, 16)  # 调用time_name程序
+Name = time_name(2017, 12, 16, 1, 5)  # 调用time_name程序
 Path = r'D:\Python Study\利用Python读取EMS数据\01 20171217EMS数据'
 nameOfPower = read_input('有功无功.txt')
 
